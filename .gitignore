@@ -32,5 +32,7 @@
 *.out
 *.app
 
-# Build Directory
+# Build and bin Directories
 build/
+test/build/
+test/bin/
