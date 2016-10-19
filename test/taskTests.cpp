@@ -1,7 +1,15 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-TEST_CASE("We can compile this")
+#include <vector>
+using std::vector;
+#include <string>
+using std::string;
+
+#include "Command.h"
+
+TEST_CASE("We can view the command given to the object")
 {
-    REQUIRE(1 == 1);
+    Command cmd = Command();
+    // cmd.parse("todo add buy milk");
 }
