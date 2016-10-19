@@ -16,3 +16,5 @@ ostream& operator<<(ostream& os, const Task& task)
        << "Priority: " << task.priority << '\n';
     return os;
 }
+
+int Task::nextId = 0;

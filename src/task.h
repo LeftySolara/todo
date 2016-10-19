@@ -13,10 +13,10 @@ class Task
 {
 public:
     Task(string desc, time_t due_date = 0, Priority priority = NONE);
+    int id;
     static int nextId;
     friend ostream& operator<<(ostream& os, const Task& task);
-protected:
-    int id;
+private:
     string description;
     time_t due_date;
     Priority priority;
