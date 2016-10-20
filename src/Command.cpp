@@ -1,6 +1,11 @@
 #include "Command.h"
+#include <cctype>
+#include <sstream>
+using std::istringstream;
+#include <algorithm>
+using std::transform;
 
-Command::Command() : action(show)
+Command::Command() : action(SHOW)
 {
 }
 
@@ -9,50 +14,54 @@ Command::Command(string input)
     parse(input);
 }
 
+// Split given string on each space character
 vector<string> Command::split_string(string str)
 {
-    
+    vector<string> result;
+    istringstream iss(str);
+    for (string s; iss >> s; )
+        result.push_back(s);
+
+    return result;
 }
 
+// Parse user input, identify arguments, and save the values
 void Command::parse(string input)
 {
+    transform(input.begin(), input.end(), input.begin(), tolower);
     vector<string> tokens = split_string(input);
 
-    switch (tokens[1]) {
-        case SHOW:
-            action = SHOW;
-        case ADD:
-            action = ADD;
-        case MODIFY:
-            action = MODIFY;
-        case DONE:
-            action = DONE;
-        case DEL:
-            action = DEL;
-        default:
-            action = SHOW;
-    }
+    if (tokens[0] == "todo")
+        tokens.erase(tokens.begin());
 
-    for (token : tokens) {
+    string verb = tokens[0];
+    if (verb == "show")
+        action = SHOW;
+    else if (verb == "add")
+        action = ADD;
+    else if (verb == "modify")
+        action = MODIFY;
+    else if (verb == "done")
+        action = DONE;
+    else if (verb == "del")
+        action = DEL;
+    else
+        action = SHOW;
+    tokens.erase(tokens.begin());
+
+    for (string token : tokens) {
         Arg arg;
 
-        if (token.find("due:") == 0) {
+        if (token.find("due:") == 0)
             arg.arg_type = DATE;
-            arg.value = token.substr(4);
-        }
-        else if (token.find("priority:") == 0) {
+        else if (token.find("priority:") == 0)
             arg.arg_type = PRIORITY;
-            arg.value = token.substr(9);
-        }
-        else if (token.find("+") == 0) {
+        else if (token.find("+") == 0)
             arg.arg_type = TAG;
-            arg.value = token.substr(1);
-        }
-        else {
+        else
             arg.arg_type = DESCRIPTION;
-            arg.value = token;
-        }
 
+        arg.value = token;
         args.push_back(arg);
     }
 }
@@ -60,23 +69,29 @@ void Command::parse(string input)
 // Return the last command given to the object
 string Command::cmd()
 {
-    string cmd_str;
+    string cmd_str = "todo";
 
     switch (action) {
-        case show:
-            cmd_str = "show";
-        case add:
-            cmd_str = "add";
-        case modify:
-            cmd_str = "modify";
-        case done:
-            cmd_str = "done";
-        case del:
-            cmd_str = "del";
+        case SHOW:
+            cmd_str.append(" show");
+            break;
+        case ADD:
+            cmd_str.append(" add");
+            break;
+        case MODIFY:
+            cmd_str.append(" modify");
+            break;
+        case DONE:
+            cmd_str.append(" done");
+            break;
+        case DEL:
+            cmd_str.append(" del");
+            break;
     }
 
-    for (Arg a : args) {
-        cmd_str = "todo" + cmd_str + " " + a.value;
+    if (!args.empty()) {
+        for (Arg a : args)
+            cmd_str.append(" " + a.value);
     }
 
     return cmd_str;

@@ -6,7 +6,7 @@ using std::vector;
 #ifndef CMD_H
 #define CMD_H
 
-enum ArgType {VERB, DESCRIPTION, TAG, DATE, PRIORITY};
+enum ArgType {DESCRIPTION, TAG, DATE, PRIORITY};
 enum Action {SHOW, ADD, MODIFY, DONE, DEL};
 
 struct Arg
