@@ -1,4 +1,5 @@
 #include "Command.h"
+#include "Task.h"
 #include <cctype>
 #include <sstream>
 using std::istringstream;
@@ -12,17 +13,6 @@ Command::Command() : action(SHOW)
 Command::Command(string input)
 {
     parse(input);
-}
-
-// Split given string on each space character
-vector<string> Command::split_string(string str)
-{
-    vector<string> result;
-    istringstream iss(str);
-    for (string s; iss >> s; )
-        result.push_back(s);
-
-    return result;
 }
 
 // Parse user input, identify arguments, and save the values
@@ -66,6 +56,32 @@ void Command::parse(string input)
     }
 }
 
+void Command::execute()
+{
+    switch (action) {
+        case SHOW:
+            showTask();
+            break;
+        case ADD:
+            addTask();
+            break;
+        case MODIFY:
+            modifyTask();
+        case DONE:
+            doneTask();
+        case DEL:
+            deleteTask();
+        default:
+            showTask();
+    }
+}
+
+void Command::execute(string input)
+{
+    parse(input);
+    execute();
+}
+
 // Return the last command given to the object
 string Command::cmd()
 {
@@ -95,4 +111,40 @@ string Command::cmd()
     }
 
     return cmd_str;
+}
+
+void Command::showTask()
+{
+    return;
+}
+
+void Command::addTask()
+{
+    Task task = Task("test string");
+}
+
+void Command::modifyTask()
+{
+    return;
+}
+
+void Command::doneTask()
+{
+    return;
+}
+
+void Command::deleteTask()
+{
+    return;
+}
+
+// Split given string on each space character
+vector<string> Command::split_string(string str)
+{
+    vector<string> result;
+    istringstream iss(str);
+    for (string s; iss >> s; )
+        result.push_back(s);
+
+    return result;
 }
