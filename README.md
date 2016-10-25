@@ -1,0 +1,1 @@
+A simple to-do program for learning purposes. Not meant to be fully-functional.

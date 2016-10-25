@@ -34,5 +34,6 @@
 
 # Build and bin Directories
 build/
+bin/
 test/build/
 test/bin/
