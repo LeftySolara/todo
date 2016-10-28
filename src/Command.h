@@ -2,6 +2,7 @@
 #include <utility>
 
 enum Property {id, status, desc, due, priority, tag};
+enum Verb {show, add, done, modify, del};
 
 typedef std::pair<Property, std::string> Arg;
 
@@ -12,13 +13,16 @@ class Command
 {
 public:
     Command();
-    // Command(std::string cmd);
+    Command(const std::string &cmd);
     // ~Command();
     // void execute();
-    // void parse();
+    void parse(std::string &cmd="");
     // void parse(std::string cmd);
 private:
+    std::vector<std::string> split_str(const std::string &str);
+    bool is_digits(cost::string &str)
     std::vector<Arg> args;
+    Verb verb;
 };
 
 #endif
