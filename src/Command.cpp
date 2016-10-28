@@ -1,47 +1,67 @@
 #include "Command.h"
 #include <sstream>
 #include <algorithm>
-#include <cctype>
 
 Command::Command()
 {
-    parse("todo show");
+    parse("");
 }
 
-Command::Command(const std::string &cmd)
+Command::Command(std::string cmd)
 {
     parse(cmd);
 }
 
-void Command::parse(std::string &cmd)
+void Command::parse(std::string cmd)
 {
-    cmd = std::transform(cmd.begin(), cmd.end(), cmd.begin(), tolower);
+    args.clear();
 
-    // Default to just showing all tasks
-    if (cmd.length() == 0 || cmd == "show" {
-        cmd_show_all();
+    if (cmd.empty()) {
+        verb = REPORT;
+    }
+
+    // If user only provides an id, show the details of that task
+    if (is_digits(cmd)) {
+        verb = SHOW;
+        Arg task_id = Arg(ID, cmd);
+        args.push_back(task_id);
         return;
     }
 
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), tolower);
     std::vector<std::string> input_args = split_str(cmd);
 
-    // std::string input_verb = input_args[0];
-    // if (input_verb == "show")
-    //     verb = show;
-    // else if (input_verb == "add")
-    //     verb = add
-    // else if (input_verb == "done")
-    //    verb = done
-    // else if (input_verb == "modify")
-    //     verb = modify
-    // else if (input_verb == "delete")
-    //     verb = del
-    // else
-    //     verb = show
-    // input_args.erase(input_args.begin());
+    if (input_args[0] == "add") {
+        // User uses "add" command without any arguments
+        // TODO: Raise error here
+        if (input_args.size() == 1)
+            return;
+
+        input_args.erase(input_args.begin());
+        std::string description = "";
+        Arg arg;
+
+        for (std::string str : input_args) {
+            if (str.find("+") == 0) {
+                arg = Arg(TAG, str.substr(1));
+                args.push_back(arg);
+            }
+            else if (str.find("due:") == 0) {
+                arg = Arg(DUE, str.substr(4));
+                args.push_back(arg);
+            }
+            else if (str.find("priority:") == 0) {
+                arg = Arg(PRIORITY, str.substr(9));
+                args.push_back(arg);
+            }
+            else
+                description = description + " " + str;
+        }
+        args.push_back(Arg(DESC, description));
+    }
 }
 
-std::vector<string> Command::split_str(const std::string &str)
+std::vector<std::string> Command::split_str(const std::string &str)
 {
     std::vector<std::string> result;
     std::istringstream iss(str);
@@ -51,7 +71,7 @@ std::vector<string> Command::split_str(const std::string &str)
     return result;
 }
 
-bool is_digits(const std::string &str)
+bool Command::is_digits(const std::string str)
 {
     return std::all_of(str.begin(), str.end(), ::isdigit);
 }

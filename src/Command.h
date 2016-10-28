@@ -1,8 +1,8 @@
 #include "Task.h"
 #include <utility>
 
-enum Property {id, status, desc, due, priority, tag};
-enum Verb {show, add, done, modify, del};
+enum Property {ID, STATUS, DESC, DUE, PRIORITY, TAG};
+enum Verb {SHOW, SHOW_ALL, ADD, DONE, MODIFY, DEL, REPORT};
 
 typedef std::pair<Property, std::string> Arg;
 
@@ -13,14 +13,16 @@ class Command
 {
 public:
     Command();
-    Command(const std::string &cmd);
+    Command(std::string cmd);
+    void parse(std::string cmd);
     // ~Command();
     // void execute();
-    void parse(std::string &cmd="");
-    // void parse(std::string cmd);
 private:
     std::vector<std::string> split_str(const std::string &str);
-    bool is_digits(cost::string &str)
+    bool is_digits(const std::string str);
+    // void cmd_show_all();    // TODO: Implement this
+    // void cmd_show_task(int task_id);
+    // void cmd_add_task(std::vector<std::string> )
     std::vector<Arg> args;
     Verb verb;
 };
