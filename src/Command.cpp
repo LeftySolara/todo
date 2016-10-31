@@ -30,34 +30,38 @@ void Command::parse(std::string cmd)
 
     std::transform(cmd.begin(), cmd.end(), cmd.begin(), tolower);
     std::vector<std::string> input_args = split_str(cmd);
+    std::string task_cmd = input_args.front();
 
-    if (input_args[0] == "add") {
+    if (task_cmd == "add") {
         // User uses "add" command without any arguments
-        // TODO: Raise error here
-        if (input_args.size() == 1)
+        if (input_args.size() == 1) {  
+            // TODO: Raise error here
             return;
-
-        input_args.erase(input_args.begin());
-        std::string description = "";
-        Arg arg;
-
-        for (std::string str : input_args) {
-            if (str.find("+") == 0) {
-                arg = Arg(TAG, str.substr(1));
-                args.push_back(arg);
-            }
-            else if (str.find("due:") == 0) {
-                arg = Arg(DUE, str.substr(4));
-                args.push_back(arg);
-            }
-            else if (str.find("priority:") == 0) {
-                arg = Arg(PRIORITY, str.substr(9));
-                args.push_back(arg);
-            }
-            else
-                description = description + " " + str;
         }
-        args.push_back(Arg(DESC, description));
+
+        verb = ADD;
+        std::vector<std::string>::iterator it = input_args.begin()+1;
+        filter_args(it, input_args.end());
+    }
+    else if (is_digits(task_cmd)) {
+        Arg id = Arg(ID, task_cmd);
+        args.push_back(id);
+
+        std::string operation = input_args.at(1);
+        if (operation == "delete") {
+            verb = DEL;
+        }
+        else if (operation == "done") {
+            verb = DONE;
+        }
+        else if (operation == "modify") {
+            verb = MODIFY;
+            std::vector<std::string>::iterator it = input_args.begin()+2;
+            filter_args(it, input_args.end());
+        }
+    }
+    else {
+        // TODO: Raise error here
     }
 }
 
@@ -74,4 +78,30 @@ std::vector<std::string> Command::split_str(const std::string &str)
 bool Command::is_digits(const std::string str)
 {
     return std::all_of(str.begin(), str.end(), ::isdigit);
+}
+
+void Command::filter_args(std::vector<std::string>::iterator it, std::vector<std::string>::iterator end)
+{
+    Arg arg;
+    std::string description = "";
+
+    while (it != end) {
+        if (it->find("+") == 0) {
+            arg = Arg(TAG, it->substr(1));
+            args.push_back(arg);
+        }
+        else if (it->find("due:") == 0) {
+            arg = Arg(DUE, it->substr(4));
+            args.push_back(arg);
+        }
+        else if (it->find("priority:") == 0) {
+            arg = Arg(PRIORITY, it->substr(9));
+            args.push_back(arg);
+        }
+        else {
+            description = description + " " + *it;
+        }
+        ++it;
+    }
+    args.push_back(Arg(DESC, description));    
 }
