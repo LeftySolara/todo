@@ -65,6 +65,41 @@ void Command::parse(std::string cmd)
     }
 }
 
+void Command::execute()
+{
+    switch (verb) {
+    case SHOW:
+        cmd_show_task();
+        break;
+    case SHOW_ALL:
+        cmd_show_all();
+        break;
+    case ADD:
+        cmd_add_task();
+        break;
+    case DONE:
+        cmd_done_task();
+        break;
+    case MODIFY:
+        cmd_modify_task();
+        break;
+    case DEL:
+        cmd_delete_task();
+        break;
+    case REPORT:
+        cmd_report();
+        break;
+    default:
+        cmd_report();
+    }
+}
+
+void Command::execute(std::string cmd)
+{
+    parse(cmd);
+    execute();
+}
+
 std::vector<std::string> Command::split_str(const std::string &str)
 {
     std::vector<std::string> result;
