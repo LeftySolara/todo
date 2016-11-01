@@ -8,5 +8,6 @@ include_directories("../src")
 
 file(GLOB TESTS "./*.cpp")
 file(GLOB SOURCES "../src/*.cpp")
- 
+
 add_executable(todo_tests ${TESTS} ${SOURCES})
+target_link_libraries(todo_tests -lsqlite3)
