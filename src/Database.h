@@ -12,7 +12,7 @@ public:
     bool execute_script(std::string filename, std::string db_path);
 private:
     sqlite3 *db;
-    static int callback();
+    static int callback(void *NotUsed, int argc, char **argv, char **azColName);
 };
 
 #endif

@@ -33,14 +33,15 @@ bool Database::execute_script(std::string filename, std::string db_path)
         }
 
         sql_statement = sql_statement + line;
-        // if (sql_statement.back() == ';') {
-        //     rc = sqlite3_exec(db, sql_statement, callback, 0, &zErrMsg);
-        //     if (rc != SQLITE_OK) {
-        //         // TODO: raise error here
-        //         sqlite3_close(db);
-        //         return false;
-        //     }
-        // }
+        if (sql_statement.back() == ';') {
+            rc = sqlite3_exec(db, sql_statement.c_str(), callback, 0, &zErrMsg);
+            if (rc != SQLITE_OK) {
+                // TODO: raise error here
+                sqlite3_close(db);
+                return false;
+            }
+            sql_statement = "";
+        }
 
     }
 
@@ -49,7 +50,11 @@ bool Database::execute_script(std::string filename, std::string db_path)
     return true;
 }
 
-static int callback()
-{
-    
+int Database::callback(void *NotUsed, int argc, char **argv, char **azColName){
+   int i;
+   for(i=0; i<argc; i++){
+      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   }
+   printf("\n");
+   return 0;
 }
