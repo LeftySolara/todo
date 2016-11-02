@@ -37,3 +37,8 @@ build/
 bin/
 test/build/
 test/bin/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
