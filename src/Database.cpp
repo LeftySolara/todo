@@ -1,4 +1,5 @@
 #include "Database.h"
+#include "exceptions.h"
 #include <fstream>
 #include <string>
 
@@ -15,7 +16,7 @@ bool Database::execute_script(std::string filename, std::string db_path)
     rc = sqlite3_open(db_path.c_str(), &db);
     if(rc) {
         // Couldn't open database
-        // TODO: raise error here
+        throw db_error;
         return false;
     }
 
