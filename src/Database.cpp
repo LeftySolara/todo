@@ -1,7 +1,6 @@
 #include "Database.h"
 #include "exceptions.h"
 #include <fstream>
-#include <string>
 
 Database::Database()
 {
@@ -37,8 +36,8 @@ bool Database::execute_script(std::string filename, std::string db_path)
         if (sql_statement.back() == ';') {
             rc = sqlite3_exec(db, sql_statement.c_str(), callback, 0, &zErrMsg);
             if (rc != SQLITE_OK) {
-                // TODO: raise error here
                 sqlite3_close(db);
+                throw sql_error;
                 return false;
             }
             sql_statement = "";
@@ -47,7 +46,6 @@ bool Database::execute_script(std::string filename, std::string db_path)
     }
 
     sqlite3_close(db);
-
     return true;
 }
 

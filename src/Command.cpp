@@ -1,4 +1,5 @@
 #include "Command.h"
+#include <stdexcept>
 #include <sstream>
 #include <algorithm>
 
@@ -35,7 +36,7 @@ void Command::parse(std::string cmd)
     if (task_cmd == "add") {
         // User uses "add" command without any arguments
         if (input_args.size() == 1) {  
-            // TODO: Raise error here
+            throw std::invalid_argument("Not enough arguments for adding task");
             return;
         }
 
@@ -61,7 +62,7 @@ void Command::parse(std::string cmd)
         }
     }
     else {
-        // TODO: Raise error here
+        throw std::invalid_argument("Invalid argument(s)")
     }
 }
 

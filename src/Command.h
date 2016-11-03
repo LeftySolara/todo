@@ -1,5 +1,6 @@
-#include "Task.h"
 #include <utility>
+#include <string>
+#include <vector>
 
 enum Property {ID, STATUS, DESC, DUE, PRIORITY, TAG};
 enum Verb {SHOW, SHOW_ALL, ADD, DONE, MODIFY, DEL, REPORT};
