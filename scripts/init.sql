@@ -9,7 +9,7 @@ BEGIN TRANSACTION;
 -- Table: tasks
 DROP TABLE IF EXISTS tasks;
 
-CREATE TABLE tasks (
+CREATE TABLE TASKS (
     id          INTEGER PRIMARY KEY ASC ON CONFLICT ROLLBACK,
     description TEXT    NOT NULL ON CONFLICT ABORT,
     due_date    DATE,

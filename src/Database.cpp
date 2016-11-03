@@ -1,28 +1,21 @@
 #include "Database.h"
 #include "exceptions.h"
 #include <fstream>
+#include <sstream>
 
-Database::Database()
+Database::Database(std::string path)
 {
-
+    db_path = path;
 }
 
-bool Database::execute_script(std::string filename, std::string db_path)
+void Database::execute_script(std::string filename)
 {
-    char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open(db_path.c_str(), &db);
-    if(rc) {
-        // Couldn't open database
-        throw db_error;
-        return false;
-    }
+    connect();
 
     std::string line;
     std::ifstream script_file(filename);
     if (!script_file.is_open()) {
-        return false;
+        throw sql_error;
     }
 
     std::string sql_statement = "";
@@ -38,7 +31,6 @@ bool Database::execute_script(std::string filename, std::string db_path)
             if (rc != SQLITE_OK) {
                 sqlite3_close(db);
                 throw sql_error;
-                return false;
             }
             sql_statement = "";
         }
@@ -46,7 +38,94 @@ bool Database::execute_script(std::string filename, std::string db_path)
     }
 
     sqlite3_close(db);
-    return true;
+}
+
+void Database::add_task(std::string desc, std::string due, int priority, std::vector<std::string> tags)
+{
+    connect();
+    if (!is_valid_date(due)) {
+        throw std::invalid_argument("Provided date is not it a valid Y-M-D format");
+    }
+    sqlite3_close(db);
+    // desc = "'" + desc + "'";
+
+
+    // std::string sql = "INSERT INTO TASKS (description, due_date, priority, status, tags) " \
+    //                   "VALUES (";
+}
+
+int Database::connect()
+{
+    rc = sqlite3_open(db_path.c_str(), &db);
+    if (rc) {
+        throw db_error;
+    }
+}
+
+bool Database::is_valid_date(std::string date)
+{
+    bool valid = true;
+    std::vector<std::string> tokens = split(date, '-');
+
+    if (tokens.size() != 3) {
+        valid = false;
+        return valid;
+    }
+
+    int year = stoi(tokens[0]);
+    int month = stoi(tokens[1]);
+    int day = stoi(tokens[2]);
+
+    if (year < 1900 || year > 32000) {
+        valid = false;
+    }
+    if (day <= 0) {
+        valid = false;
+    }
+
+    switch (month) {
+    case 2:
+        if ((year % 4) == 0) {
+            if (day > 29) {
+                valid = false;
+            }
+        }
+        else {
+            if (day > 28) {
+                valid = false;
+            }
+        }
+        break;
+    case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+        if (day > 31) {
+            valid = false;
+        }
+        break;
+    case 4: case 6: case 9: case 11:
+        if (day > 30) {
+            valid = false;
+        }
+        break;
+    default:
+        valid = false;
+        break;
+    }
+
+    return valid;
+}
+
+std::vector<std::string> Database::split(std::string str, char delim)
+{
+    std::string token;
+    std::stringstream stream;
+    std::vector<std::string> tokens;
+    size_t pos = 0;
+
+    stream.str(str);
+    while (std::getline(stream, token, delim)) {
+        tokens.push_back(token);
+    }
+    return tokens;
 }
 
 int Database::callback(void *NotUsed, int argc, char **argv, char **azColName){

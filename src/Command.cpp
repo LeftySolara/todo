@@ -62,7 +62,7 @@ void Command::parse(std::string cmd)
         }
     }
     else {
-        throw std::invalid_argument("Invalid argument(s)")
+        throw std::invalid_argument("Invalid argument(s)");
     }
 }
 
@@ -101,6 +101,8 @@ void Command::execute(std::string cmd)
     execute();
 }
 
+// Split string on spaces. We don't want any other delimeters since that would
+// mess up the command-line arguments.
 std::vector<std::string> Command::split_str(const std::string &str)
 {
     std::vector<std::string> result;
