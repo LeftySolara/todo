@@ -8,18 +8,19 @@
 class Database
 {
 public:
-    Database(std::string path);
+    Database(const std::string &path);
     ~Database();   
-    void execute_script(std::string filename);
+    void execute_script(const std::string &filename);
     void add_task(std::string desc, std::string due, int priority, std::vector<std::string> tags);
 private:
-    sqlite3 *db;
     int rc;
     char *zErrMsg = 0;
+    sqlite3 *db;
     std::string db_path;
+
     int connect();
-    bool is_valid_date(std::string date);
-    std::vector<std::string> split(std::string str, char delim);
+    bool is_valid_date(const std::string &date);
+    std::vector<std::string> split(const std::string &str, char delim);
     std::string join_tags(std::vector<std::string> v);
     static int callback(void *NotUsed, int argc, char **argv, char **azColName);
 };

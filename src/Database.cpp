@@ -3,7 +3,7 @@
 #include <sstream>
 #include <stdio.h>
 
-Database::Database(std::string path)
+Database::Database(const std::string &path)
 {
     db_path = path;
 }
@@ -19,7 +19,7 @@ Database::~Database()
     }
 }
 
-void Database::execute_script(std::string filename)
+void Database::execute_script(const std::string &filename)
 {
     if (connect() != SQLITE_OK) {
         return;
@@ -57,7 +57,7 @@ void Database::add_task(std::string desc, std::string due, int priority, std::ve
     if (connect() != SQLITE_OK) {
         return;
     }
-    
+
     if (!is_valid_date(due)) {
         fprintf(stderr, "Provided date is not it a valid Y-M-D format\n");
         return;
@@ -87,7 +87,7 @@ int Database::connect()
     return SQLITE_OK;
 }
 
-bool Database::is_valid_date(std::string date)
+bool Database::is_valid_date(const std::string &date)
 {
     bool valid = true;
     std::vector<std::string> tokens = split(date, '-');
@@ -139,7 +139,7 @@ bool Database::is_valid_date(std::string date)
     return valid;
 }
 
-std::vector<std::string> Database::split(std::string str, char delim)
+std::vector<std::string> Database::split(const std::string &str, char delim)
 {
     std::string token;
     std::stringstream stream;
