@@ -8,9 +8,22 @@ Database::Database(std::string path)
     db_path = path;
 }
 
+Database::~Database()
+{
+    // We don't need to check if db is empty/open, as passing a null pointer
+    // to sqlite3 memory allocation methods is harmless.
+    sqlite3_free(zErrMsg);
+    rc = sqlite3_close(db);
+    if (rc == SQLITE_BUSY) {
+        fprintf(stderr, "Could not close database: %s\n", sqlite3_errmsg(db));
+    }
+}
+
 void Database::execute_script(std::string filename)
 {
-    connect();
+    if (connect() != SQLITE_OK) {
+        return;
+    }
 
     std::string line;
     std::ifstream script_file(filename);
@@ -30,22 +43,21 @@ void Database::execute_script(std::string filename)
         if (sql_statement.back() == ';') {
             rc = sqlite3_exec(db, sql_statement.c_str(), callback, 0, &zErrMsg);
             if (rc != SQLITE_OK) {
-                sqlite3_free(zErrMsg);
                 fprintf(stderr, "Can't execute sql statement: %s\n", sqlite3_errmsg(db));
-                sqlite3_close(db);
                 return;
             }
             sql_statement = "";
         }
 
     }
-
-    sqlite3_close(db);
 }
 
 void Database::add_task(std::string desc, std::string due, int priority, std::vector<std::string> tags)
 {
-    connect();
+    if (connect() != SQLITE_OK) {
+        return;
+    }
+    
     if (!is_valid_date(due)) {
         fprintf(stderr, "Provided date is not it a valid Y-M-D format\n");
         return;
@@ -62,9 +74,7 @@ void Database::add_task(std::string desc, std::string due, int priority, std::ve
     rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Can't execute sql statement: %s\n", sqlite3_errmsg(db));
-        sqlite3_free(zErrMsg);
     }
-    sqlite3_close(db);
 }
 
 int Database::connect()
@@ -72,7 +82,9 @@ int Database::connect()
     rc = sqlite3_open(db_path.c_str(), &db);
     if (rc) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return SQLITE_CANTOPEN;
     }
+    return SQLITE_OK;
 }
 
 bool Database::is_valid_date(std::string date)

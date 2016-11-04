@@ -9,7 +9,7 @@ class Database
 {
 public:
     Database(std::string path);
-    // ~Database();   
+    ~Database();   
     void execute_script(std::string filename);
     void add_task(std::string desc, std::string due, int priority, std::vector<std::string> tags);
 private:
