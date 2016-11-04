@@ -29,6 +29,7 @@ void Database::execute_script(std::string filename)
         if (sql_statement.back() == ';') {
             rc = sqlite3_exec(db, sql_statement.c_str(), callback, 0, &zErrMsg);
             if (rc != SQLITE_OK) {
+                sqlite3_free(zErrMsg);
                 sqlite3_close(db);
                 throw sql_error;
             }
@@ -46,12 +47,21 @@ void Database::add_task(std::string desc, std::string due, int priority, std::ve
     if (!is_valid_date(due)) {
         throw std::invalid_argument("Provided date is not it a valid Y-M-D format");
     }
+
+    desc = "'" + desc + "'";
+    due = "'" + due + "'";
+    std::string status = "0, ";
+    std::string tag_string = join_tags(tags);
+    std::string sql = "INSERT INTO TASKS (description, due_date, priority, status, tags) " \
+                      "VALUES (" + desc + ", " + due + ", " + std::to_string(priority) \
+                      + ", " + status + "'" + tag_string + "');";
+
+    rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        throw sql_error;
+        sqlite3_free(zErrMsg);
+    }
     sqlite3_close(db);
-    // desc = "'" + desc + "'";
-
-
-    // std::string sql = "INSERT INTO TASKS (description, due_date, priority, status, tags) " \
-    //                   "VALUES (";
 }
 
 int Database::connect()
@@ -126,6 +136,19 @@ std::vector<std::string> Database::split(std::string str, char delim)
         tokens.push_back(token);
     }
     return tokens;
+}
+
+std::string Database::join_tags(std::vector<std::string> v)
+{
+    std::string output = "";
+    for (std::string s : v) {
+        output = output + s;
+        // Dont put a space after the last tag
+        if (s != v.back()) {
+            output = output + " ";
+        }
+    }
+    return output;
 }
 
 int Database::callback(void *NotUsed, int argc, char **argv, char **azColName){

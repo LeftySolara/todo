@@ -20,6 +20,7 @@ private:
     int connect();
     bool is_valid_date(std::string date);
     std::vector<std::string> split(std::string str, char delim);
+    std::string join_tags(std::vector<std::string> v);
     static int callback(void *NotUsed, int argc, char **argv, char **azColName);
 };
 
