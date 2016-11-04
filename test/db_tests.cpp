@@ -16,6 +16,6 @@ TEST_CASE("We can add tasks to the database")
     Database db = Database(DB_PATH);
     std::vector<std::string> no_tags;
     std::vector<std::string> tags {"code", "testing", "fun"};
-    db.add_task("Test task", "2016-11-16", 2, tags);
-    db.add_task("another task", "2018-4-11", 1, no_tags);
+    db.add_task("Test task 1", "2016-11-16", 2, tags);
+    db.add_task("Test task 2", "2018-4-11", 1, no_tags);
 }

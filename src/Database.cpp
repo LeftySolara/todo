@@ -1,7 +1,7 @@
 #include "Database.h"
-#include "exceptions.h"
 #include <fstream>
 #include <sstream>
+#include <stdio.h>
 
 Database::Database(std::string path)
 {
@@ -15,7 +15,8 @@ void Database::execute_script(std::string filename)
     std::string line;
     std::ifstream script_file(filename);
     if (!script_file.is_open()) {
-        throw sql_error;
+        fprintf(stderr, "Error: Could not open script file %s\n", filename);
+        return;
     }
 
     std::string sql_statement = "";
@@ -30,8 +31,9 @@ void Database::execute_script(std::string filename)
             rc = sqlite3_exec(db, sql_statement.c_str(), callback, 0, &zErrMsg);
             if (rc != SQLITE_OK) {
                 sqlite3_free(zErrMsg);
+                fprintf(stderr, "Can't execute sql statement: %s\n", sqlite3_errmsg(db));
                 sqlite3_close(db);
-                throw sql_error;
+                return;
             }
             sql_statement = "";
         }
@@ -45,7 +47,8 @@ void Database::add_task(std::string desc, std::string due, int priority, std::ve
 {
     connect();
     if (!is_valid_date(due)) {
-        throw std::invalid_argument("Provided date is not it a valid Y-M-D format");
+        fprintf(stderr, "Provided date is not it a valid Y-M-D format\n");
+        return;
     }
 
     desc = "'" + desc + "'";
@@ -58,7 +61,7 @@ void Database::add_task(std::string desc, std::string due, int priority, std::ve
 
     rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
     if (rc != SQLITE_OK) {
-        throw sql_error;
+        fprintf(stderr, "Can't execute sql statement: %s\n", sqlite3_errmsg(db));
         sqlite3_free(zErrMsg);
     }
     sqlite3_close(db);
@@ -68,7 +71,7 @@ int Database::connect()
 {
     rc = sqlite3_open(db_path.c_str(), &db);
     if (rc) {
-        throw db_error;
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
     }
 }
 
