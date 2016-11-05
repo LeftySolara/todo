@@ -77,6 +77,19 @@ void Database::add_task(std::string desc, std::string due, int priority, std::ve
     }
 }
 
+void Database::remove_task(const int task_id)
+{
+    if (connect() != SQLITE_OK) {
+        return;
+    }
+
+    std::string sql = "DELETE from TASKS where id=" + std::to_string(task_id) + ";";
+    rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot delete task: %s\n", &zErrMsg);
+    }
+}
+
 int Database::connect()
 {
     rc = sqlite3_open(db_path.c_str(), &db);

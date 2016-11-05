@@ -12,6 +12,7 @@ public:
     ~Database();   
     void execute_script(const std::string &filename);
     void add_task(std::string desc, std::string due, int priority, std::vector<std::string> tags);
+    void remove_task(int task_id);
 private:
     int rc;
     char *zErrMsg = 0;
