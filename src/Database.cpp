@@ -54,12 +54,18 @@ void Database::execute_script(const std::string &filename)
 
 void Database::add_task(std::string desc, std::string due, int priority, std::vector<std::string> tags)
 {
-    if (connect() != SQLITE_OK) {
+
+    if (!is_valid_date(due)) {
+        fprintf(stderr, "Error: Provided date is not it a valid Y-M-D format\n");
         return;
     }
 
-    if (!is_valid_date(due)) {
-        fprintf(stderr, "Provided date is not it a valid Y-M-D format\n");
+    if (desc.empty()) {
+        fprintf(stderr, "Error: Description must not be empty\n");
+        return;
+    }
+
+    if (connect() != SQLITE_OK) {
         return;
     }
 
