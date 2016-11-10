@@ -2,10 +2,13 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
+#include <stdexcept>
+
 
 Database::Database(const std::string &path)
 {
     db_path = path;
+    connect();
 }
 
 Database::~Database()
@@ -52,35 +55,83 @@ void Database::execute_script(const std::string &filename)
     }
 }
 
-void Database::add_task(std::string desc, std::string due, int priority, std::vector<std::string> tags)
+int Database::add_task(std::string desc)
 {
-
-    if (!is_valid_date(due)) {
-        fprintf(stderr, "Error: Provided date is not it a valid Y-M-D format\n");
-        return;
-    }
-
-    if (desc.empty()) {
-        fprintf(stderr, "Error: Description must not be empty\n");
-        return;
-    }
-
-    if (connect() != SQLITE_OK) {
-        return;
-    }
-
     desc = "'" + desc + "'";
-    due = "'" + due + "'";
-    std::string status = "0, ";
-    std::string tag_string = join_tags(tags);
-    std::string sql = "INSERT INTO TASKS (description, due_date, priority, status, tags) " \
-                      "VALUES (" + desc + ", " + due + ", " + std::to_string(priority) \
-                      + ", " + status + "'" + tag_string + "');";
+    std::string sql = "INSERT INTO TASKS (description) VALUES (" + desc + ");";
+    return execute_sql(sql);
+}
 
-    rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can't execute sql statement: %s\n", sqlite3_errmsg(db));
+int Database::add_task(std::string desc, std::string due)
+{
+    desc = "'" + desc + "'";
+    if (!is_valid_date(due)) {
+        throw std::invalid_argument("Invalid date format");
     }
+    
+    std::string sql = "INSERT INTO TASKS (description, due_date) VALUES ("
+                    + desc + ", " + due + ");";
+    return execute_sql(sql);
+}
+
+int Database::add_task(std::string desc, std::string due, std::vector<std::string> tags)
+{
+    desc = "'" + desc + "'";
+    if (!is_valid_date(due)) {
+        throw std::invalid_argument("Invalid date format");
+    }
+
+    std::string tag_string = "'" + join_tags(tags) + "'";
+    std::string sql = "INSERT INTO TASKS (description, due_date, tags) VALUES ("
+                    + desc + ", " + due + ", " + tag_string + ");";
+    return execute_sql(sql);
+}
+
+int Database::add_task(std::string desc, std::string due, unsigned int priority)
+{
+    desc = "'" + desc + "'";
+    if (!is_valid_date(due)) {
+        throw std::invalid_argument("Invalid date format");
+    }
+
+    std::string sql = "INSERT INTO TASKS (description, due_date, priority) VALUES ("
+                    + desc + ", " + due + ", " + std::to_string(priority) + ");";
+    return execute_sql(sql);
+}
+
+int Database::add_task(std::string desc, std::vector<std::string> tags)
+{
+    desc = "'" + desc + "'";
+    std::string tag_string = "'" + join_tags(tags) + "'";
+    std::string sql = "INSERT INTO TASKS (description, tags) VALUES ("
+                    + desc + ", " + tag_string + ");";
+    return execute_sql(sql);
+}
+
+int Database::add_task(std::string desc, unsigned int priority, std::vector<std::string> tags)
+{
+    desc = "'" + desc + "'";
+    std::string tag_string = "'" + join_tags(tags) + "'";
+    std::string sql = "INSERT INTO TASKS (description, priority, tags) VALUES ("
+                    + desc + ", " + std::to_string(priority) + ", " + tag_string + ");";
+    return execute_sql(sql);
+}
+
+int Database::add_task(std::string desc, unsigned int priority)
+{
+    desc = "'" + desc + "'";
+    std::string sql = "INSERT INTO TASKS (description, priority) VALUES ("
+                    + desc + ", " + std::to_string(priority) + ");";
+    return execute_sql(sql);
+}
+
+int Database::add_task(std::string desc, std::string due, unsigned int priority, std::vector<std::string> tags)
+{
+    desc = "'" + desc + "'";
+    std::string tag_string = "'" + join_tags(tags) + "'";
+    std::string sql = "INSERT INTO TASKS (description, due_date, priority, tags) VALUES ("
+                    + desc + ", " + due + ", " + std::to_string(priority) + ", " + tag_string + ");";
+    return execute_sql(sql);
 }
 
 void Database::remove_task(const int task_id)
@@ -183,6 +234,15 @@ std::string Database::join_tags(std::vector<std::string> v)
         }
     }
     return output;
+}
+
+int Database::execute_sql(std::string statement)
+{
+    rc = sqlite3_exec(db, statement.c_str(), callback, 0, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Can't execute sql statement: %s\n", sqlite3_errmsg(db));
+    }
+    return rc;
 }
 
 int Database::callback(void *NotUsed, int argc, char **argv, char **azColName){
