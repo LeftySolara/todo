@@ -149,17 +149,14 @@ int Database::add_task(std::string desc, std::string due, unsigned int priority,
     return execute_sql(sql);
 }
 
-void Database::remove_task(const int task_id)
+int Database::remove_task(const int task_id)
 {
     if (connect() != SQLITE_OK) {
-        return;
+        return rc;
     }
 
     std::string sql = "DELETE from TASKS where id=" + std::to_string(task_id) + ";";
-    rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "Cannot delete task: %s\n", &zErrMsg);
-    }
+    return execute_sql(sql);
 }
 
 int Database::connect()
@@ -167,9 +164,8 @@ int Database::connect()
     rc = sqlite3_open(db_path.c_str(), &db);
     if (rc) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return SQLITE_CANTOPEN;
     }
-    return SQLITE_OK;
+    return rc;
 }
 
 bool Database::is_valid_date(const std::string &date)
@@ -260,10 +256,10 @@ int Database::execute_sql(std::string statement)
     return rc;
 }
 
-int Database::callback(void *NotUsed, int argc, char **argv, char **azColName){
+int Database::callback(void *not_used, int num_cols, char **fields, char **col_names){
    int i;
-   for(i=0; i<argc; i++){
-      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   for(i = 0; i < num_cols; i++) {
+      printf("%s = %s\n", col_names[i], fields[i] ? fields[i] : "NULL");
    }
    printf("\n");
    return 0;

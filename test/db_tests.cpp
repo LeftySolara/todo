@@ -55,25 +55,26 @@ TEST_CASE("We can modify the database", "[add][remove]")
         {
             REQUIRE(db.add_task("Do the thing", "2016-07-06", 1, input_tags) == SQLITE_OK);
         }
+
+        SECTION("We can't add tasks with invalid date formats")
+        {
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016"), std::invalid_argument);
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016-05"), std::invalid_argument);
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "tomorrow"), std::invalid_argument);
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "12345"), std::invalid_argument);
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016-02-31"), std::invalid_argument);
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016-05-0555"), std::invalid_argument);
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016--05-5"), std::invalid_argument);
+            REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "!@#$&^"), std::invalid_argument);
+        }
     }
 
-    SECTION("We can't add tasks with invalid date formats")
+    SECTION("We can remove tasks from the database")
     {
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016"), std::invalid_argument);
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016-05"), std::invalid_argument);
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "tomorrow"), std::invalid_argument);
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "12345"), std::invalid_argument);
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016-02-31"), std::invalid_argument);
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016-05-0555"), std::invalid_argument);
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "2016--05-5"), std::invalid_argument);
-        REQUIRE_THROWS_AS(db.add_task("Read chapter 7 for class", "!@#$&^"), std::invalid_argument);
+        SECTION("Tasks that exist are removed")
+        {
+            REQUIRE(db.remove_task(3) == SQLITE_OK);
+            REQUIRE(db.remove_task(2) == SQLITE_OK);
+        }
     }
-
-    // SECTION("We can remove tasks from the database")
-    // {
-    //     REQUIRE(db.remove_task(3) == SQLITE_OK);
-    //     REQUIRE(db.remove_task(2) == SQLITE_OK);
-    //     REQUIRE_THROWS(db.remove_task(999999));
-    //     REQUIRE_THROWS(db.remove_task(888888));
-    // }
 }
