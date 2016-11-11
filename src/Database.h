@@ -31,7 +31,7 @@ private:
     std::vector<std::string> split(const std::string &str, char delim);
     std::string join_tags(std::vector<std::string> v);
     int execute_sql(std::string statement);
-    static int callback(void *NotUsed, int argc, char **argv, char **azColName);
+    static int callback(void *not_used, int num_cols, char **fields, char **col_names);
 };
 
 #endif
