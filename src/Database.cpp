@@ -64,38 +64,44 @@ int Database::add_task(std::string desc)
 
 int Database::add_task(std::string desc, std::string due)
 {
-    desc = "'" + desc + "'";
     if (!is_valid_date(due)) {
         throw std::invalid_argument("Invalid date format");
     }
-    
+
+    desc = "'" + desc + "'";
+    due = "'" + due + "'";
     std::string sql = "INSERT INTO TASKS (description, due_date) VALUES ("
-                    + desc + ", " + due + ");";
+                    + desc + ", date(" + due + "));";
+
     return execute_sql(sql);
 }
 
 int Database::add_task(std::string desc, std::string due, std::vector<std::string> tags)
 {
-    desc = "'" + desc + "'";
     if (!is_valid_date(due)) {
         throw std::invalid_argument("Invalid date format");
     }
 
+    desc = "'" + desc + "'";
+    due = "'" + due + "'";
     std::string tag_string = "'" + join_tags(tags) + "'";
     std::string sql = "INSERT INTO TASKS (description, due_date, tags) VALUES ("
-                    + desc + ", " + due + ", " + tag_string + ");";
+                    + desc + ", date(" + due + "), " + tag_string + ");";
+
     return execute_sql(sql);
 }
 
 int Database::add_task(std::string desc, std::string due, unsigned int priority)
 {
-    desc = "'" + desc + "'";
     if (!is_valid_date(due)) {
         throw std::invalid_argument("Invalid date format");
     }
 
+    desc = "'" + desc + "'";
+    due = "'" + due + "'";
     std::string sql = "INSERT INTO TASKS (description, due_date, priority) VALUES ("
-                    + desc + ", " + due + ", " + std::to_string(priority) + ");";
+                    + desc + ", date(" + due + "), " + std::to_string(priority) + ");";
+
     return execute_sql(sql);
 }
 
@@ -105,6 +111,7 @@ int Database::add_task(std::string desc, std::vector<std::string> tags)
     std::string tag_string = "'" + join_tags(tags) + "'";
     std::string sql = "INSERT INTO TASKS (description, tags) VALUES ("
                     + desc + ", " + tag_string + ");";
+
     return execute_sql(sql);
 }
 
@@ -114,6 +121,7 @@ int Database::add_task(std::string desc, unsigned int priority, std::vector<std:
     std::string tag_string = "'" + join_tags(tags) + "'";
     std::string sql = "INSERT INTO TASKS (description, priority, tags) VALUES ("
                     + desc + ", " + std::to_string(priority) + ", " + tag_string + ");";
+
     return execute_sql(sql);
 }
 
@@ -122,15 +130,22 @@ int Database::add_task(std::string desc, unsigned int priority)
     desc = "'" + desc + "'";
     std::string sql = "INSERT INTO TASKS (description, priority) VALUES ("
                     + desc + ", " + std::to_string(priority) + ");";
+
     return execute_sql(sql);
 }
 
 int Database::add_task(std::string desc, std::string due, unsigned int priority, std::vector<std::string> tags)
 {
+    if (!is_valid_date(due)) {
+        throw std::invalid_argument("Invalid date format");
+    }
+
     desc = "'" + desc + "'";
+    due = "'" + due + "'";
     std::string tag_string = "'" + join_tags(tags) + "'";
     std::string sql = "INSERT INTO TASKS (description, due_date, priority, tags) VALUES ("
-                    + desc + ", " + due + ", " + std::to_string(priority) + ", " + tag_string + ");";
+                    + desc + ", date(" + due + "), " + std::to_string(priority) + ", " + tag_string + ");";
+                    
     return execute_sql(sql);
 }
 
