@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "Database.h"
+#include "Task.h"
 
 #define DB_INIT_SCRIPT "../../scripts/init.sql"
 #define DB_PATH "../test.db"
@@ -37,7 +38,7 @@ TEST_CASE("We can modify the database", "[add][remove]")
         }
         SECTION("Add tasks with a description, due date, and priority")
         {
-            REQUIRE(db.add_task("Call mom", "2016-05-03", 3) == SQLITE_OK);
+            REQUIRE(db.add_task("Call mom", "2016-05-03", high) == SQLITE_OK);
         }
         SECTION("Add tasks with a description and tags")
         {
@@ -45,15 +46,15 @@ TEST_CASE("We can modify the database", "[add][remove]")
         }
         SECTION("Add tasks with a description, priority, and tags")
         {
-            REQUIRE(db.add_task("Fix firewall rules", 2, input_tags) == SQLITE_OK);
+            REQUIRE(db.add_task("Fix firewall rules", med, input_tags) == SQLITE_OK);
         }
         SECTION("Add tasks with a description and priority")
         {
-            REQUIRE(db.add_task("Finish that thing", 2) == SQLITE_OK);
+            REQUIRE(db.add_task("Finish that thing", med) == SQLITE_OK);
         }
         SECTION("Add tasks with a description, due date, priority, and tags")
         {
-            REQUIRE(db.add_task("Do the thing", "2016-07-06", 1, input_tags) == SQLITE_OK);
+            REQUIRE(db.add_task("Do the thing", "2016-07-06", low, input_tags) == SQLITE_OK);
         }
 
         SECTION("We can't add tasks with invalid date formats")
