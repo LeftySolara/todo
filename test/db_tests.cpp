@@ -18,6 +18,18 @@ TEST_CASE("We can modify the database", "[add][remove]")
 
     SECTION("We can add tasks to the database")
     {
+        SECTION("Add tasks using a Task object")
+        {
+            Task t1 = {
+                1,              // id
+                false,          // done
+                "First task",   // description
+                "2016-04-05",   // due date
+                low,              // priority
+                input_tags      // tags
+            };
+            REQUIRE(db.add_task(t1) == SQLITE_OK);
+        }
         SECTION("Add tasks with only a description")
         {
             REQUIRE(db.add_task("Buy milk") == SQLITE_OK);

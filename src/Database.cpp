@@ -55,6 +55,42 @@ void Database::execute_script(const std::string &filename)
     }
 }
 
+int Database::add_task(Task tsk)
+{
+    if (tsk.description.empty()) {
+        throw std::invalid_argument("Task must have a description");
+    }
+
+    bool has_due = !tsk.due_date.empty();
+    bool has_priority = tsk.priority == low || tsk.priority == med || tsk.priority == high;
+    bool has_tags = tsk.tags.size() > 0;
+
+    if (has_due && has_priority && has_tags) {
+        return add_task(tsk.description, tsk.due_date, tsk.priority, tsk.tags);
+    }
+    else if (has_due && has_priority && !has_tags) {
+        return add_task(tsk.description, tsk.due_date, tsk.priority);
+    }
+    else if (has_due && !has_priority && has_tags) {
+        return add_task(tsk.description, tsk.due_date, tsk.tags);
+    }
+    else if (!has_due && has_priority && has_tags) {
+        return add_task(tsk.description, tsk.priority, tsk.tags);
+    }
+    else if (has_due && !has_priority && !has_tags) {
+        return add_task(tsk.description, tsk.due_date);
+    }
+    else if (!has_due && has_priority && !has_tags) {
+        return add_task(tsk.description, tsk.priority);
+    }
+    else if (!has_due && !has_priority && has_tags) {
+        return add_task(tsk.description, tsk.tags);
+    }
+    else if (!has_due && !has_priority && !has_tags) {
+        return add_task(tsk.description);
+    }
+}
+
 int Database::add_task(std::string desc)
 {
     desc = "'" + desc + "'";

@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+#include "Task.h"
+
 #ifndef DATABASE_H
 #define DATABASE_H
 
@@ -11,6 +13,7 @@ public:
     Database(const std::string &path);
     ~Database();   
     void execute_script(const std::string &filename);
+    int add_task(Task tsk);
     int add_task(std::string desc);
     int add_task(std::string desc, std::string due);
     int add_task(std::string desc, std::string due, std::vector<std::string> tags);
