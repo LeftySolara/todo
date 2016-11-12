@@ -24,6 +24,7 @@ public:
     int add_task(std::string desc, std::string due, unsigned int priority, std::vector<std::string> tags);
     int remove_task(int task_id);
     int remove_all();
+    Task get(const int id);
 private:
     int rc;
     char *zErrMsg = 0;

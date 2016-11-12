@@ -61,6 +61,8 @@ int Database::add_task(Task tsk)
         throw std::invalid_argument("Task must have a description");
     }
 
+    // The ID in the Task doesn't matter; the underlying database
+    // handles the IDs to prevent conflicts
     bool has_due = !tsk.due_date.empty();
     bool has_priority = tsk.priority == low || tsk.priority == med || tsk.priority == high;
     bool has_tags = tsk.tags.size() > 0;
@@ -203,6 +205,24 @@ int Database::remove_all()
 
     std::string sql = "DELETE FROM TASKS;";
     return execute_sql(sql);
+}
+
+Task Database::get(const int id)
+{
+    if (connect() != SQLITE_OK) {
+        return rc;
+    }
+
+    sqlite3_stmt *stmt;
+    std::string sql = "SELECT FROM TASKS WHERE id=" + std::to_string(id);
+    rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SELECT failed: %s\n", sqlite3_errmsg(db));
+    }
+
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        // TODO: put data into Task object
+    }
 }
 
 int Database::connect()

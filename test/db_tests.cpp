@@ -95,3 +95,21 @@ TEST_CASE("We can modify the database", "[add][remove]")
         REQUIRE(db.remove_all() == SQLITE_OK);
     }
 }
+
+TEST_CASE("We can fetch tasks from the database")
+{
+    Database db = Database(DB_PATH);
+    std::vector<std::string> input_tags {"tag0", "tag1", "tag2", "tag3", "tag4"};
+
+    Task t1 = {
+        1,              // id
+        false,          // done
+        "First task",   // description
+        "2016-04-05",   // due date
+        low,            // priority
+        input_tags      // tags
+    };
+
+    db.add_task(t1);
+    REQUIRE(t1 == db.get(t1.id));
+}
