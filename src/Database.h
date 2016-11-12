@@ -20,6 +20,7 @@ public:
     int add_task(std::string desc, unsigned int priority);
     int add_task(std::string desc, std::string due, unsigned int priority, std::vector<std::string> tags);
     int remove_task(int task_id);
+    int remove_all();
 private:
     int rc;
     char *zErrMsg = 0;

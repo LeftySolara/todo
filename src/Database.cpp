@@ -159,6 +159,16 @@ int Database::remove_task(const int task_id)
     return execute_sql(sql);
 }
 
+int Database::remove_all()
+{
+    if (connect() != SQLITE_OK) {
+        return rc;
+    }
+
+    std::string sql = "DELETE FROM TASKS;";
+    return execute_sql(sql);
+}
+
 int Database::connect()
 {
     rc = sqlite3_open(db_path.c_str(), &db);
@@ -256,6 +266,7 @@ int Database::execute_sql(std::string statement)
     return rc;
 }
 
+// The callback is called for each fow in the result set of a SELECT statement
 int Database::callback(void *not_used, int num_cols, char **fields, char **col_names){
    int i;
    for(i = 0; i < num_cols; i++) {

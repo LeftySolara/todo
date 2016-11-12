@@ -77,4 +77,8 @@ TEST_CASE("We can modify the database", "[add][remove]")
             REQUIRE(db.remove_task(2) == SQLITE_OK);
         }
     }
+    SECTION("We can clear the database")
+    {
+        REQUIRE(db.remove_all() == SQLITE_OK);
+    }
 }
