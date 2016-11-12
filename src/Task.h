@@ -16,4 +16,7 @@ struct Task
     std::vector<std::string> tags;
 };
 
+bool operator==(const Task &lhs, const Task &rhs);
+bool operator!=(const Task &lhs, const Task &rhs);
+
 #endif
