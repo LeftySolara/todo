@@ -3,17 +3,16 @@
 #include "Task.h"
 
 #define DB_INIT_SCRIPT "../../scripts/init.sql"
-#define DB_PATH "../test.db"
 
 TEST_CASE("We can initialize the database", "[create]")
 {
-    Database db = Database(DB_PATH);
+    Database db = Database();
     REQUIRE_NOTHROW(db.execute_script(DB_INIT_SCRIPT));
 }
 
 TEST_CASE("We can modify the database", "[add][remove]")
 {
-    Database db = Database(DB_PATH);
+    Database db = Database();
     std::vector<std::string> input_tags {"tag0", "tag1", "tag2", "tag3", "tag4"};
 
     SECTION("We can add tasks to the database")
@@ -98,7 +97,7 @@ TEST_CASE("We can modify the database", "[add][remove]")
 
 TEST_CASE("We can fetch tasks from the database")
 {
-    Database db = Database(DB_PATH);
+    Database db = Database();
     std::vector<std::string> input_tags {"tag0", "tag1", "tag2", "tag3", "tag4"};
 
     Task t1 = {

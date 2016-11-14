@@ -240,6 +240,11 @@ Task Database::get(const int id)
     return tsk;
 }
 
+int Database::status() const
+{
+    return rc;
+}
+
 int Database::connect()
 {
     rc = sqlite3_open(db_path.c_str(), &db);

@@ -10,7 +10,7 @@
 class Database
 {
 public:
-    Database(const std::string &path);
+    Database(const std::string &path="../todo.db");
     ~Database();   
     void execute_script(const std::string &filename);
     int add_task(Task tsk);
@@ -25,6 +25,7 @@ public:
     int remove_task(int task_id);
     int remove_all();
     Task get(const int id);
+    int status() const;
 private:
     int rc;
     char *zErrMsg = 0;
