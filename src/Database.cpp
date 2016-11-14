@@ -209,20 +209,35 @@ int Database::remove_all()
 
 Task Database::get(const int id)
 {
+    Task tsk;
+
+    // Return an empty object if we can't connect to the database
     if (connect() != SQLITE_OK) {
-        return rc;
+        return tsk;
     }
 
     sqlite3_stmt *stmt;
-    std::string sql = "SELECT FROM TASKS WHERE id=" + std::to_string(id);
+    std::string sql = "SELECT * FROM TASKS WHERE id=" + std::to_string(id);
     rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SELECT failed: %s\n", sqlite3_errmsg(db));
     }
 
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-        // TODO: put data into Task object
+        tsk.id = sqlite3_column_int(stmt, 0);
+        tsk.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        tsk.due_date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        tsk.priority = (Priority)sqlite3_column_int(stmt, 3);
+        tsk.done = sqlite3_column_int(stmt, 4);
+        tsk.tags = split(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
     }
+
+    if (rc != SQLITE_DONE) {
+        fprintf(stderr, "SELECT failed: %s\n", sqlite3_errmsg(db));
+    }
+
+    sqlite3_finalize(stmt);
+    return tsk;
 }
 
 int Database::connect()

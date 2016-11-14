@@ -110,6 +110,16 @@ TEST_CASE("We can fetch tasks from the database")
         input_tags      // tags
     };
 
+    Task t2 = {
+        2,              // id
+        false,          // done
+        "Second task",   // description
+        "2016-04-05",   // due date
+        low,            // priority
+        input_tags      // tags
+    };
+
     db.add_task(t1);
     REQUIRE(t1 == db.get(t1.id));
+    REQUIRE(t2 != db.get(t1.id));
 }
