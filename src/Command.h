@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+#include "Database.h"
+
 enum Property {ID, STATUS, DESC, DUE, PRIORITY, TAG};
 enum Verb {SHOW, SHOW_ALL, ADD, DONE, MODIFY, DEL, REPORT};
 
@@ -26,12 +28,13 @@ private:
     // TODO: Implement all of these
     void cmd_show_all() { return; }
     void cmd_show_task() { return; }
-    void cmd_add_task() { return; }
+    void cmd_add_task();
     void cmd_modify_task() { return; }
     void cmd_done_task() { return; }
     void cmd_delete_task() { return; }
     void cmd_report() { return; }
 
+    Database db;
     std::vector<Arg> args;
     Verb verb;
 };
