@@ -10,7 +10,7 @@
 class Database
 {
 public:
-    Database(const std::string &path="../todo.db");
+    Database(const std::string &path="../todo.sqlite");
     ~Database();   
     void execute_script(const std::string &filename);
     int add_task(Task tsk);
