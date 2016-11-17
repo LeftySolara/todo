@@ -69,6 +69,23 @@ void Command::parse(std::string cmd_str)
         throw std::invalid_argument("Invalid argument(s)");
     }
 
-    cmd_args.erase(cmd_args.begin());
-    // TODO: assign properties to arguments
+    // When the action is "add", the next word is part of the task description,
+    // so don't delete it
+    if (cmd_verb != "add") {
+        cmd_args.erase(cmd_args.begin());
+    }
+
+    args = filter_args(cmd_args);
+}
+
+std::vector<Arg> filter_args(const std::vector<std::string> &tokens)
+{
+    Arg argument;
+    std::string description = "";
+
+    for (std::string token : tokens) {
+        if (token.find("due:") == 0) {
+            
+        }
+    }
 }

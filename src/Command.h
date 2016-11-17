@@ -19,6 +19,8 @@ private:
     Action action = REPORT;
     std::vector<Arg> args;
     std::string cmd;
+
+    std::vector<Arg> filter_args(std::vector<std::string> tokens);
 };
 
 #endif
