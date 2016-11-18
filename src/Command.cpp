@@ -137,7 +137,7 @@ void Command::execute()
     }
 }
 
-void cmd_add_task()
+void Command::cmd_add_task()
 {
     Task tsk;
     Property prop;

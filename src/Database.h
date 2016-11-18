@@ -14,14 +14,6 @@ public:
     ~Database();   
     void execute_script(const std::string &filename);
     int add_task(Task tsk);
-    int add_task(std::string desc);
-    int add_task(std::string desc, std::string due);
-    int add_task(std::string desc, std::string due, std::vector<std::string> tags);
-    int add_task(std::string desc, std::string due, unsigned int priority);
-    int add_task(std::string desc, std::vector<std::string> tags);
-    int add_task(std::string desc, unsigned int priority, std::vector<std::string> tags);
-    int add_task(std::string desc, unsigned int priority);
-    int add_task(std::string desc, std::string due, unsigned int priority, std::vector<std::string> tags);
     int remove_task(int task_id);
     int remove_all();
     Task get(const int id);
@@ -39,6 +31,15 @@ private:
     std::string join_tags(std::vector<std::string> v);
     int execute_sql(std::string statement);
     static int callback(void *not_used, int num_cols, char **fields, char **col_names);
+
+    int add_task(std::string desc);
+    int add_task(std::string desc, std::string due);
+    int add_task(std::string desc, std::string due, std::vector<std::string> tags);
+    int add_task(std::string desc, std::string due, unsigned int priority);
+    int add_task(std::string desc, std::vector<std::string> tags);
+    int add_task(std::string desc, unsigned int priority, std::vector<std::string> tags);
+    int add_task(std::string desc, unsigned int priority);
+    int add_task(std::string desc, std::string due, unsigned int priority, std::vector<std::string> tags);
 };
 
 #endif
