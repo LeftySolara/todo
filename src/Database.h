@@ -26,6 +26,7 @@ public:
     int remove_all();
     Task get(const int id);
     int status() const;
+    // TODO: add method for closing the database connection manually
 private:
     int rc;
     char *zErrMsg = 0;
