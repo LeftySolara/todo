@@ -20,7 +20,7 @@ private:
     std::vector<Arg> args;
     std::string cmd;
 
-    std::vector<Arg> filter_args(std::vector<std::string> tokens);
+    void filter_args(const std::vector<std::string> &tokens);
 };
 
 #endif

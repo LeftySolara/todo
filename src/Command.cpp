@@ -75,17 +75,34 @@ void Command::parse(std::string cmd_str)
         cmd_args.erase(cmd_args.begin());
     }
 
-    args = filter_args(cmd_args);
+    filter_args(cmd_args);
 }
 
-std::vector<Arg> filter_args(const std::vector<std::string> &tokens)
+void Command::filter_args(const std::vector<std::string> &tokens)
 {
     Arg argument;
     std::string description = "";
 
     for (std::string token : tokens) {
         if (token.find("due:") == 0) {
-            
+            argument = Arg(DUE, token.substr(4));
+            args.push_back(argument);
+        }
+        else if (token.find("priority:") == 0) {
+            argument = Arg(PRIORITY, token.substr(9));
+            args.push_back(argument);
+        }
+        else if (token.find("+") == 0) {
+            argument = Arg(TAG, token.substr(1));
+            args.push_back(argument);
+        }
+        else {
+            description = description + " " + token;
         }
     }
+
+    // Remove the leading space character
+    description.erase(description.begin());
+    argument = Arg(DESC, description);
+    args.push_back(argument);
 }
