@@ -299,6 +299,11 @@ bool Database::is_valid_date(const std::string &date)
         return valid;
     }
 
+    if (tokens.at(1).length() != 2 || tokens.at(2).length() != 2) {
+        valid = false;
+        return valid;
+    }
+
     int year = stoi(tokens[0]);
     int month = stoi(tokens[1]);
     int day = stoi(tokens[2]);
