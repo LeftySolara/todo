@@ -17,21 +17,20 @@ public:
     Command();
     Command(std::string cmd_str);
     void parse(std::string cmd_str);
-    void execute();
+    int execute();
 private:
     Action action = REPORT;
     std::vector<Arg> args;
     std::string cmd;
-    Database db;
 
     void filter_args(const std::vector<std::string> &tokens);
-    void cmd_show_task() { return; }
-    void cmd_show_all() { return; }
-    void cmd_add_task();
-    void cmd_done_task() { return; }
-    void cmd_modify_task() { return; }
-    void cmd_delete_task() { return; }
-    void cmd_report() { return; }
+    int cmd_show_task() { return 0; }
+    int cmd_show_all() { return 0; }
+    int cmd_add_task();
+    int cmd_done_task() { return 0; }
+    int cmd_modify_task() { return 0; }
+    int cmd_delete_task() { return 0; }
+    int cmd_report() { return 0; }
 };
 
 #endif

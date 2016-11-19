@@ -5,6 +5,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#define DB_PATH "../test.sqlite"
+
 Command::Command()
 {
     cmd = "";
@@ -108,36 +110,29 @@ void Command::filter_args(const std::vector<std::string> &tokens)
     args.push_back(argument);
 }
 
-void Command::execute()
+int Command::execute()
 {
     switch (action) {
     case SHOW:
-        cmd_show_task();
-        break;
+        return cmd_show_task();
     case SHOW_ALL:
-        cmd_show_all();
-        break;
+        return cmd_show_all();
     case ADD:
-        cmd_add_task();
-        break;
+        return cmd_add_task();
     case DONE:
-        cmd_done_task();
-        break;
+        return cmd_done_task();
     case MODIFY:
-        cmd_modify_task();
-        break;
+        return cmd_modify_task();
     case DEL:
-        cmd_delete_task();
-        break;
+        return cmd_delete_task();
     case REPORT:
-        cmd_report();
-        break;
+        return cmd_report();
     default:
-        cmd_report();
+        return cmd_report();
     }
 }
 
-void Command::cmd_add_task()
+int Command::cmd_add_task()
 {
     Task tsk;
     Property prop;
@@ -159,13 +154,13 @@ void Command::cmd_add_task()
         }
         else if (prop == PRIORITY) {
             if (val == "low") {
-                tsk.priority = (Priority)0;
-            }
-            else if (val == "med") {
                 tsk.priority = (Priority)1;
             }
-            else if (val == "high") {
+            else if (val == "med") {
                 tsk.priority = (Priority)2;
+            }
+            else if (val == "high") {
+                tsk.priority = (Priority)3;
             }
             else {
                 throw std::invalid_argument("Invalid value for priority");
@@ -177,6 +172,6 @@ void Command::cmd_add_task()
     }
 
     tsk.tags = tags;
-    db = Database();
-    db.add_task(tsk);
+    Database db = Database(DB_PATH);
+    return db.add_task(tsk);
 }
