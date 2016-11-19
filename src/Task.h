@@ -4,7 +4,7 @@
 #ifndef TASK_H
 #define TASK_H
 
-enum Priority {low, med, high};
+enum Priority {none, low, med, high};
 
 struct Task
 {

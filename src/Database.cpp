@@ -95,6 +95,10 @@ int Database::add_task(Task tsk)
 
 int Database::add_task(std::string desc)
 {
+    if (desc.empty()) {
+        throw std::invalid_argument("Cannot add task with empty description");
+    }
+    
     desc = "'" + desc + "'";
     std::string sql = "INSERT INTO TASKS (description) VALUES (" + desc + ");";
     return execute_sql(sql);
