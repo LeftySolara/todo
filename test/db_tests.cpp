@@ -135,7 +135,7 @@ TEST_CASE("We can fetch tasks from the database")
         "First task",   // description
         "2016-04-05",   // due date
         low,            // priority
-        user_tags      // tags
+        user_tags       // tags
     };
 
     Task t2 = {

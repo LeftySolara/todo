@@ -19,6 +19,16 @@ namespace utils
         return tokens;
     }
 
+    std::string join(const std::vector<std::string> &tokens, char delim)
+    {
+        std::string output = "";
+        for (std::string str : tokens) {
+            output = output + delim + str;
+        }
+        // remove leading delimiter character
+        return output.substr(1);
+    }
+
     void to_lower(std::string str)
     {
         std::transform(str.begin(), str.end(), str.begin(), tolower);
