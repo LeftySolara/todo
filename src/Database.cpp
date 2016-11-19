@@ -183,7 +183,7 @@ int Database::add_task(std::string desc, std::string due, unsigned int priority,
     std::string tag_string = "'" + join_tags(tags) + "'";
     std::string sql = "INSERT INTO TASKS (description, due_date, priority, tags) VALUES ("
                     + desc + ", date(" + due + "), " + std::to_string(priority) + ", " + tag_string + ");";
-                    
+
     return execute_sql(sql);
 }
 
@@ -333,12 +333,27 @@ std::string Database::join_tags(std::vector<std::string> v)
     return output;
 }
 
+// Execute the provided SQL statement. Not meant to be used for SELECTs.
+// Returns SQLITE_DONE on successful completion.
 int Database::execute_sql(std::string statement)
 {
-    rc = sqlite3_exec(db, statement.c_str(), callback, 0, &zErrMsg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can't execute sql statement: %s\n", sqlite3_errmsg(db));
+    if (statement.empty()) {
+        throw std::invalid_argument("Cannot execute empty SQL command");
     }
+
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(db, statement.c_str(), -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
+        return rc;
+    }
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
+    }
+    sqlite3_finalize(stmt);
+
     return rc;
 }
 
