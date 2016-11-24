@@ -6,11 +6,14 @@
 #include <stdio.h>
 #include <stdexcept>
 
+#define DB_INIT_SCRIPT "../../scripts/init.sql"
+
 
 Database::Database(const std::string &path)
 {
+    // Create the database table if it doesn't exist
     db_path = path;
-    connect();
+    execute_script(DB_INIT_SCRIPT);
 }
 
 Database::~Database()

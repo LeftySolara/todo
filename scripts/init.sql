@@ -7,9 +7,7 @@ PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
 -- Table: tasks
-DROP TABLE IF EXISTS tasks;
-
-CREATE TABLE TASKS (
+CREATE TABLE IF NOT EXISTS TASKS (
     id          INTEGER PRIMARY KEY ASC ON CONFLICT ROLLBACK,
     description TEXT    NOT NULL ON CONFLICT ABORT,
     due_date    DATE,
