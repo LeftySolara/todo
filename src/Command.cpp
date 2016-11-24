@@ -105,8 +105,10 @@ void Command::filter_args(const std::vector<std::string> &tokens)
     }
 
     // Remove the leading space character
-    description.erase(description.begin());
-    argument = Arg(DESC, description);
+    if (!description.empty()) {
+        description.erase(description.begin());
+        argument = Arg(DESC, description);
+    }
     args.push_back(argument);
 }
 
