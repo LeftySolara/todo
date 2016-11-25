@@ -10,7 +10,7 @@
 class Command
 {
 public:
-    enum Action {SHOW, SHOW_ALL, ADD, DONE, MODIFY, DEL, REPORT, CLEAR};
+    enum Action {SHOW, ADD, DONE, MODIFY, DEL, REPORT, CLEAR};
     enum Property {ID, STATUS, DESC, DUE, PRIORITY, TAG};
     typedef std::pair<Property, std::string> Arg;
 
@@ -25,11 +25,10 @@ private:
 
     void filter_args(const std::vector<std::string> &tokens);
     int cmd_show_task();
-    int cmd_show_all() { return 0; }
     int cmd_add_task();
     int cmd_done_task() { return 0; }
     int cmd_modify_task() { return 0; }
-    int cmd_delete_task() { return 0; }
+    int cmd_delete_task();
     int cmd_clear();
     int cmd_report() { return 0; }
 };

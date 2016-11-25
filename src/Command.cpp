@@ -123,8 +123,6 @@ int Command::execute()
     switch (action) {
     case SHOW:
         return cmd_show_task();
-    case SHOW_ALL:
-        return cmd_show_all();
     case ADD:
         return cmd_add_task();
     case DONE:
@@ -148,6 +146,7 @@ int Command::cmd_show_task()
     for (Arg arg : args) {
         if (arg.first == ID) {
             task_id = std::stoi(arg.second);
+            break;
         }
     }
 
@@ -203,6 +202,24 @@ int Command::cmd_add_task()
     tsk.tags = tags;
     Database db = Database(DB_PATH);
     return db.add_task(tsk);
+}
+
+int Command::cmd_delete_task()
+{
+    int task_id;
+    for (Arg arg : args) {
+        if (arg.first == ID) {
+            task_id = std::stoi(arg.second);
+            break;
+        }
+    }
+
+    if (!task_id) {
+        throw std::invalid_argument("Task does not exist");
+    }
+
+    Database db = Database(DB_PATH);
+    return db.remove_task(task_id);
 }
 
 int Command::cmd_clear()

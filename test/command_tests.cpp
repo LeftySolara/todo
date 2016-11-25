@@ -74,12 +74,12 @@ TEST_CASE("We can remove tasks from the database", "[remove][delete]")
 
     SECTION("Existing tasks can be deleted")
     {
-        REQUIRE(cmd.execute() == SQLITE_OK);
+        REQUIRE(cmd.execute() == SQLITE_DONE);
     }
     SECTION("If a task doesn't exist, command does nothing")
     {
         cmd.parse("8888 delete");
-        REQUIRE(cmd.execute() == SQLITE_OK);
+        REQUIRE(cmd.execute() == SQLITE_DONE);
     }
     SECTION("We can clear the database")
     {
