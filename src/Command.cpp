@@ -4,6 +4,7 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 
 #define DB_PATH "../test.sqlite"
 
@@ -30,8 +31,13 @@ void Command::parse(std::string cmd_str)
     // If user only provides an id, show the details of that task
     if (utils::is_digits(cmd_str)) {
         action = SHOW;
-        Arg task_id = Arg(ID, cmd);
+        Arg task_id = Arg(ID, cmd_str);
         args.push_back(task_id);
+        return;
+    }
+
+    if (cmd_str == "clear") {
+        action = CLEAR;
         return;
     }
 
@@ -42,7 +48,7 @@ void Command::parse(std::string cmd_str)
 
     if (cmd_verb == "add") {
         // User uses "add" command without any arguments
-        if (cmd_args.empty()) {  
+        if (cmd_args.empty()) {
             throw std::invalid_argument("Not enough arguments for adding task");
             return;
         }
@@ -129,9 +135,30 @@ int Command::execute()
         return cmd_delete_task();
     case REPORT:
         return cmd_report();
+    case CLEAR:
+        return cmd_clear();
     default:
         return cmd_report();
     }
+}
+
+int Command::cmd_show_task()
+{
+    int task_id;
+    for (Arg arg : args) {
+        if (arg.first == ID) {
+            task_id = std::stoi(arg.second);
+        }
+    }
+
+    if (!task_id) {
+        throw std::invalid_argument("Task does not exist");
+    }
+
+    Database db = Database(DB_PATH);
+    Task task = db.get(task_id);
+    std::cout << task;
+    return 0;
 }
 
 int Command::cmd_add_task()
@@ -176,4 +203,10 @@ int Command::cmd_add_task()
     tsk.tags = tags;
     Database db = Database(DB_PATH);
     return db.add_task(tsk);
+}
+
+int Command::cmd_clear()
+{
+    Database db = Database(DB_PATH);
+    return db.remove_all();
 }

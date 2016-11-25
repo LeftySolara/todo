@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "Command.h"
+#include "Task.h"
 
 TEST_CASE("We can initialize Command objects", "[init]")
 {
@@ -33,7 +34,7 @@ TEST_CASE("We can add tasks to the database", "[add]")
         cmd.parse("add task with description, due date, and medium priority due:2016-04-04 priority:med");
         REQUIRE(cmd.execute() == SQLITE_DONE);
         cmd.parse("add task with description, due date, and high priority due:2016-04-04 priority:high");
-        REQUIRE(cmd.execute() == SQLITE_DONE);        
+        REQUIRE(cmd.execute() == SQLITE_DONE);
     }
     SECTION("We can add a task with a description and tags")
     {
@@ -65,4 +66,33 @@ TEST_CASE("We can add tasks to the database", "[add]")
             REQUIRE_THROWS_AS(cmd.execute(), std::invalid_argument);
         }
     }
+}
+
+TEST_CASE("We can remove tasks from the database", "[remove][delete]")
+{
+    Command cmd = Command("1 delete");
+
+    SECTION("Existing tasks can be deleted")
+    {
+        REQUIRE(cmd.execute() == SQLITE_OK);
+    }
+    SECTION("If a task doesn't exist, command does nothing")
+    {
+        cmd.parse("8888 delete");
+        REQUIRE(cmd.execute() == SQLITE_OK);
+    }
+    SECTION("We can clear the database")
+    {
+        cmd.parse("clear");
+        REQUIRE(cmd.execute() == SQLITE_DONE);
+    }
+}
+
+TEST_CASE("We can get print tasks info to the screen")
+{
+    Command cmd = Command("add buy new shoes due:2016-12-12 priority:low +shopping");
+    cmd.execute();
+
+    cmd.parse("1");
+    REQUIRE_NOTHROW(cmd.execute());
 }
