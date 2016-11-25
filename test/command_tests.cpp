@@ -102,3 +102,12 @@ TEST_CASE("We can mark a task as completed")
     Command cmd = Command("1 done");
     REQUIRE(cmd.execute() == SQLITE_DONE);
 }
+
+TEST_CASE("We can modify a task")
+{
+    Command cmd = Command("1 modify buy other shoes");
+    REQUIRE(cmd.execute() == SQLITE_DONE);
+
+    cmd.parse("1 modify due:2016-12-24 priority:high +holiday");
+    REQUIRE(cmd.execute() == SQLITE_DONE);
+}

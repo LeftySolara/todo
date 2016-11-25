@@ -28,7 +28,7 @@ private:
     int cmd_show_task();
     int cmd_add_task();
     int cmd_done_task();
-    int cmd_modify_task() { return 0; }
+    int cmd_modify_task();
     int cmd_delete_task();
     int cmd_clear();
     int cmd_report() { return 0; }

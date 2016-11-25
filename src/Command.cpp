@@ -219,6 +219,54 @@ int Command::cmd_done_task()
     return db.execute_sql(sql);
 }
 
+int Command::cmd_modify_task()
+{
+    Database db = Database(DB_PATH);
+    int rc;
+    std::string task_id = std::to_string(get_id());
+    std::string sql;
+
+    for (Arg property : args) {
+        if (property.first == DESC) {
+            std::string description = "'" + property.second + "'";
+            sql = "UPDATE TASKS SET description = " + description;
+        }
+        else if (property.first == DUE) {
+            std::string due = "'" + property.second + "'";
+            sql = "UPDATE TASKS SET due_date = " + due;
+        }
+        else if (property.first == PRIORITY) {
+            std::string priority;
+            if (property.second == "none") {
+                priority = "0";
+            }
+            else if (property.second == "low") {
+                priority = "1";
+            }
+            else if (property.second == "med") {
+                priority = "2";
+            }
+            else if (property.second == "high") {
+                priority = "3";
+            }
+            sql = "UPDATE TASKS SET priority = " + priority;
+        }
+        else if (property.first == TAG) {
+            std::string tags = "'" + property.second + "'";
+            sql = "UPDATE TASKS SET tags = tags || " + tags;
+        }
+        else {
+            continue;
+        }
+        sql += " WHERE id = " + task_id + ";";
+
+        if ((rc = db.execute_sql(sql)) != SQLITE_DONE) {
+            break;
+        }
+    }
+    return rc;
+}
+
 int Command::cmd_delete_task()
 {
     int task_id = get_id();
