@@ -118,6 +118,23 @@ void Command::filter_args(const std::vector<std::string> &tokens)
     args.push_back(argument);
 }
 
+int Command::get_id()
+{
+    int task_id;
+    for (Arg arg : args) {
+        if (arg.first == ID) {
+            task_id = std::stoi(arg.second);
+            break;
+        }
+    }
+
+    if (!task_id) {
+        throw std::invalid_argument("Task does not exist");
+    }
+
+    return task_id;
+}
+
 int Command::execute()
 {
     switch (action) {
@@ -142,18 +159,7 @@ int Command::execute()
 
 int Command::cmd_show_task()
 {
-    int task_id;
-    for (Arg arg : args) {
-        if (arg.first == ID) {
-            task_id = std::stoi(arg.second);
-            break;
-        }
-    }
-
-    if (!task_id) {
-        throw std::invalid_argument("Task does not exist");
-    }
-
+    int task_id = get_id();
     Database db = Database(DB_PATH);
     Task task = db.get(task_id);
     std::cout << task;
@@ -204,20 +210,18 @@ int Command::cmd_add_task()
     return db.add_task(tsk);
 }
 
+int Command::cmd_done_task()
+{
+    int task_id = get_id();
+    std::string sql = "UPDATE TASKS SET status = 1 WHERE id = "
+                    + std::to_string(task_id) + ";";
+    Database db = Database(DB_PATH);
+    return db.execute_sql(sql);
+}
+
 int Command::cmd_delete_task()
 {
-    int task_id;
-    for (Arg arg : args) {
-        if (arg.first == ID) {
-            task_id = std::stoi(arg.second);
-            break;
-        }
-    }
-
-    if (!task_id) {
-        throw std::invalid_argument("Task does not exist");
-    }
-
+    int task_id = get_id();
     Database db = Database(DB_PATH);
     return db.remove_task(task_id);
 }

@@ -96,3 +96,9 @@ TEST_CASE("We can get print tasks info to the screen")
     cmd.parse("1");
     REQUIRE_NOTHROW(cmd.execute());
 }
+
+TEST_CASE("We can mark a task as completed")
+{
+    Command cmd = Command("1 done");
+    REQUIRE(cmd.execute() == SQLITE_DONE);
+}

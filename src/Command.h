@@ -24,9 +24,10 @@ private:
     std::string cmd;
 
     void filter_args(const std::vector<std::string> &tokens);
+    int get_id();
     int cmd_show_task();
     int cmd_add_task();
-    int cmd_done_task() { return 0; }
+    int cmd_done_task();
     int cmd_modify_task() { return 0; }
     int cmd_delete_task();
     int cmd_clear();

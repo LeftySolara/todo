@@ -12,9 +12,10 @@ class Database
 {
 public:
     Database(const std::string &path="../todo.sqlite");
-    ~Database();   
+    ~Database();
 
     void execute_script(const std::string &filename);
+    int execute_sql(std::string statement);
     int add_task(Task tsk);
     int remove_task(const int task_id);
     int remove_all();
@@ -27,7 +28,6 @@ private:
     std::string db_path;
 
     int connect();
-    int execute_sql(std::string statement);
     static int callback(void *not_used, int num_cols, char **fields, char **col_names);
 
     int add_task(std::string desc);
@@ -38,7 +38,7 @@ private:
     int add_task(std::string desc, unsigned int priority, std::vector<std::string> tags);
     int add_task(std::string desc, unsigned int priority);
     int add_task(std::string desc, std::string due, unsigned int priority, std::vector<std::string> tags);
-    
+
     bool is_valid_date(const std::string &date);
 };
 
