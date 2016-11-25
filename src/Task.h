@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <ostream>
 
 #ifndef TASK_H
 #define TASK_H
@@ -18,5 +19,6 @@ struct Task
 
 bool operator==(const Task &lhs, const Task &rhs);
 bool operator!=(const Task &lhs, const Task &rhs);
+std::ostream& operator<<(std::ostream &os, const Task &task);
 
 #endif
