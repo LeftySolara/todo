@@ -151,6 +151,21 @@ Task Database::get(const int task_id)
     return tsk;
 }
 
+std::vector<Task> Database::get_all()
+{
+    std::vector<Task> tasks;
+    Task task;
+    std::string desc;
+    int i = 1;
+
+    while ((desc = get(i).description) != "") {
+        task = get(i++);
+        tasks.push_back(task);
+    }
+
+    return tasks;
+}
+
 int Database::connect()
 {
     rc = sqlite3_open(db_path.c_str(), &db);

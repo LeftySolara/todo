@@ -20,6 +20,7 @@ public:
     int remove_task(const int task_id);
     int remove_all();
     Task get(const int task_id);
+    std::vector<Task> get_all();
 
 private:
     int rc;
