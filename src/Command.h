@@ -31,7 +31,7 @@ private:
     int cmd_modify_task();
     int cmd_delete_task();
     int cmd_clear();
-    int cmd_report() { return 0; }
+    int cmd_report();
 };
 
 #endif

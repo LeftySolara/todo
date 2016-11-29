@@ -252,7 +252,7 @@ int Command::cmd_modify_task()
             sql = "UPDATE TASKS SET priority = " + priority;
         }
         else if (property.first == TAG) {
-            std::string tags = "'" + property.second + "'";
+            std::string tags = "' " + property.second + "'";
             sql = "UPDATE TASKS SET tags = tags || " + tags;
         }
         else {
@@ -278,4 +278,65 @@ int Command::cmd_clear()
 {
     Database db = Database(DB_PATH);
     return db.remove_all();
+}
+
+int Command::cmd_report()
+{
+    Database db = Database(DB_PATH);
+    std::vector<Task> tasks = db.get_all();
+
+    // Widths for header columns
+    int id_width = 3;
+    int due_width = 11;
+    int priority_width = 5;
+    int desc_width = tasks.front().description.length();
+
+    // Use the longest description and tag string to get column widths
+    int tag_width = 0;
+    std::string tag_string;
+    for (Task tsk : tasks) {
+        tag_string = utils::join(tsk.tags);
+        if (tag_string.length() > tag_width) {
+            tag_width = tag_string.length() + 1;
+        }
+        if (tsk.description.length() > desc_width) {
+            desc_width = tsk.description.length();
+        }
+    }
+
+
+    std::cout.width(id_width); std::cout << std::left << "ID";
+    std::cout.width(tag_width); std::cout << std::left << "Tags";
+    std::cout.width(priority_width); std::cout << std::left << "Pri";
+    std::cout.width(due_width); std::cout << std::left << "Due";
+    std::cout.width(desc_width); std::cout << std::left << "Description" << std::endl;
+    std::cout.width(id_width); std::cout.fill('-'); std::cout << std::right << " ";
+    std::cout.width(tag_width); std::cout.fill('-'); std::cout << std::right << " ";
+    std::cout.width(priority_width); std::cout.fill('-'); std::cout << std::right << " ";
+    std::cout.width(due_width); std::cout.fill('-'); std::cout << std::right << " ";
+    std::cout.width(desc_width); std::cout.fill('-'); std::cout << std::right << "" << std::endl;
+
+    for (Task tsk : tasks) {
+        tag_string = utils::join(tsk.tags);
+
+        std::string pri;
+        if (tsk.priority == 1) {
+            pri = "low";
+        }
+        else if (tsk.priority == 2) {
+            pri = "med";
+        }
+        else if (tsk.priority == 3) {
+            pri = "high";
+        }
+        else {
+            pri = "";
+        }
+
+        std::cout.width(id_width); std::cout.fill(' '); std::cout << std::left << tsk.id;
+        std::cout.width(tag_width); std::cout.fill(' '); std::cout << std::left << tag_string;
+        std::cout.width(priority_width); std::cout.fill(' '); std::cout << std::left << pri;
+        std::cout.width(due_width); std::cout.fill(' '); std::cout << std::left << tsk.due_date;
+        std::cout.width(desc_width); std::cout.fill(' '); std::cout << std::left << tsk.description << std::endl;
+    }
 }

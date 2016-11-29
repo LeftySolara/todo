@@ -90,7 +90,7 @@ TEST_CASE("We can remove tasks from the database", "[remove][delete]")
 
 TEST_CASE("We can get print tasks info to the screen")
 {
-    Command cmd = Command("add buy new shoes due:2016-12-12 priority:low +shopping");
+    Command cmd = Command("add printing test due:2016-12-12 priority:low +shopping");
     cmd.execute();
 
     cmd.parse("1");
@@ -110,4 +110,17 @@ TEST_CASE("We can modify a task")
 
     cmd.parse("1 modify due:2016-12-24 priority:high +holiday");
     REQUIRE(cmd.execute() == SQLITE_DONE);
+}
+
+TEST_CASE("We can print reports")
+{
+    Command cmd = Command();
+    cmd.parse("add pick up loan paperwork priority:med");
+    cmd.execute();
+    cmd.parse("add mail party invites due:2016-12-14");
+    cmd.execute();
+    cmd.parse("add finsh lab report");
+    cmd.execute();
+    cmd.parse("");
+    REQUIRE_NOTHROW(cmd.execute());
 }

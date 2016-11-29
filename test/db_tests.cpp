@@ -142,12 +142,28 @@ TEST_CASE("We can fetch tasks from the database")
         2,
         false,
         "Second task",
-        "2016-04-05",
+        "2016-04-07",
         low, 
         user_tags
     };
 
+    db.remove_all();
     db.add_task(t1);
+    db.add_task(t2);
     REQUIRE(t1 == db.get(t1.id));
+    REQUIRE(t2 == db.get(t2.id));
+    REQUIRE(t1 != db.get(t2.id));
     REQUIRE(t2 != db.get(t1.id));
+
+    SECTION("We get an empty task when requesting an id that doesn't exist")
+    {
+        Task t3 = db.get(12345);
+        REQUIRE(t3.id == 0);
+    }
+
+    SECTION("We can get the size of the database")
+    {
+        db.add_task(t2);
+        REQUIRE(db.size() == 3);
+    }
 }
