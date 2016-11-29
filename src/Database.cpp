@@ -136,13 +136,17 @@ Task Database::get(const int task_id)
 
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
         tsk.id = sqlite3_column_int(stmt, 0);
-        tsk.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        if (sqlite3_column_text(stmt, 1)) {
+            tsk.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        }
         if (sqlite3_column_text(stmt, 2)) {
             tsk.due_date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
         }
         tsk.priority = (Priority)sqlite3_column_int(stmt, 3);
         tsk.done = sqlite3_column_int(stmt, 4);
-        tsk.tags = utils::split(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
+        if (sqlite3_column_text(stmt, 5)) {
+            tsk.tags = utils::split(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
+        }
     }
 
 
