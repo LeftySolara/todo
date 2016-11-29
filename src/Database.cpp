@@ -137,14 +137,23 @@ Task Database::get(const int task_id)
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
         tsk.id = sqlite3_column_int(stmt, 0);
         tsk.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-        tsk.due_date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        if (sqlite3_column_text(stmt, 2)) {
+            tsk.due_date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        }
         tsk.priority = (Priority)sqlite3_column_int(stmt, 3);
         tsk.done = sqlite3_column_int(stmt, 4);
         tsk.tags = utils::split(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
     }
 
+
     if (rc != SQLITE_DONE) {
         fprintf(stderr, "SELECT failed: %s\n", sqlite3_errmsg(db));
+    }
+
+    if (tsk.id < 1 || tsk.id > size()) {
+        tsk.id = 0;
+        tsk.priority = none;
+        tsk.done = 0;
     }
 
     sqlite3_finalize(stmt);
@@ -156,14 +165,45 @@ std::vector<Task> Database::get_all()
     std::vector<Task> tasks;
     Task task;
     std::string desc;
-    int i = 1;
 
-    while ((desc = get(i).description) != "") {
-        task = get(i++);
+    int rows = size();
+
+    for (int i = 1; i <= rows; ++i) {
+        task = get(i);
         tasks.push_back(task);
     }
 
     return tasks;
+}
+
+int Database::size()
+{
+    if (connect() != SQLITE_OK) {
+        return -1;
+    }
+
+    sqlite3_stmt *stmt;
+    std::string sql = "SELECT COUNT (*) FROM TASKS;";
+    rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+
+    int size;
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        size = sqlite3_column_int(stmt, 0);
+    }
+
+    if (rc != SQLITE_DONE) {
+        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+
+    sqlite3_finalize(stmt);
+    return size;
 }
 
 int Database::connect()

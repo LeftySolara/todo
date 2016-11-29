@@ -21,6 +21,7 @@ public:
     int remove_all();
     Task get(const int task_id);
     std::vector<Task> get_all();
+    int size();
 
 private:
     int rc;
