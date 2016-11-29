@@ -22,6 +22,10 @@ namespace utils
     std::string join(const std::vector<std::string> &tokens, char delim)
     {
         std::string output = "";
+        if (tokens.size() == 0) {
+            return output;
+        }
+        
         for (std::string str : tokens) {
             output = output + delim + str;
         }
